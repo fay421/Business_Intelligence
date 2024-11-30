@@ -21,5 +21,6 @@ WHERE
 ORDER BY 
     p.match_no,               -- Sort results first by match number
     p.kick_no;                -- Then by the kick number within each match
-
-
+-----------------------------------------------------------------------------------------------------------------------
+-- Basic Queries for Soccer Project
+-- Query 26:

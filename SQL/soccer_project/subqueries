@@ -1,1 +1,73 @@
+-- Q1: Write to find out which teams played the first match of the 2016 Euro Cup(IN GENERAL). 
+-- Return match number, country name.
+
+-- Selects the country name and match number from the country table */
+SELECT c.country_name, md.match_no
+FROM country c
+
+-- Filters the country table by matching country_id with the team_id obtained from match_details */
+WHERE c.country_id IN (
+    --Retrieves team_id from match_details where match number is among the earliest played matches */
+    SELECT md.team_id
+    FROM match_details md
+    WHERE md.match_no IN (
+        -- Finds the match number(s) for the match(es) that occurred on the earliest play date */
+        SELECT mm.match_no
+        FROM match_mast mm
+        WHERE mm.play_date = (
+            -- Gets the earliest play date from the match_mast table */
+            SELECT MIN(play_date) FROM match_mast
+        )
+    )
+);
+
+);
+----------------------------------------------------------------------------
+-- Q4:Write to find the match number in which Germany played against Poland.
+-- Group the result set on match number. Return match number.
+
+SELECT match_no  -- Select the match number
+FROM match_details  -- The table containing match details
+WHERE 
+    team_id = (
+        SELECT country_id  -- Get the country_id of Germany
+        FROM country
+        WHERE country_name LIKE 'Germany'
+    )
+    OR 
+     team_id = (
+        SELECT country_id  -- Get the country_id of Poland
+        FROM country
+        WHERE country_name LIKE 'Poland'
+    )
+GROUP BY match_no  -- Group by match number to aggregate the teams involved in each match
+HAVING COUNT(DISTINCT team_id) = 2;  -- Only include matches where both teams (Germany and Poland) participated
+----------------------------------------------------------------------------
+-- Q5:Write to find the result of the match where Portugal played against Hungary.
+-- Return match_no, play_stage, play_date, results, goal_score.
+
+SELECT match_no, play_stage, play_date, results, goal_score
+FROM match_mast mm      -- From the match_mast table (aliased as 'mm' for convenience)
+WHERE EXISTS (           -- Check if the subquery returns any rows, indicating the condition is met for each match
+        SELECT 1       -- Select 1 is used because EXISTS only checks for the presence of a row, the value is not important
+        FROM match_details md   -- From the match_details table (aliased as 'md')
+        JOIN country c  -- Join with the country table (aliased as 'c')
+        ON md.team_id = c.country_id  -- Join condition linking team_id from match_details to country_id in country
+        WHERE mm.match_no = md.match_no  -- Filter to only include details related to the current match number from match_mast
+        AND c.country_name IN ('Portugal', 'Hungary')  -- Only include matches involving Portugal or Hungary
+        GROUP BY md.match_no   -- Group the results by match number to ensure both teams are involved in the same match
+        HAVING COUNT(DISTINCT md.team_id) = 2  -- Only include matches where both teams (Portugal and Hungary) are present
+    );
+----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 

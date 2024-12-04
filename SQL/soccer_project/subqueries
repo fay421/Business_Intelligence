@@ -16,12 +16,8 @@ WHERE c.country_id IN (
         FROM match_mast mm
         WHERE mm.play_date = (
             -- Gets the earliest play date from the match_mast table */
-            SELECT MIN(play_date) FROM match_mast
-        )
-    )
-);
+            SELECT MIN(play_date) FROM match_mast )));
 
-);
 ----------------------------------------------------------------------------
 -- Q4:Write to find the match number in which Germany played against Poland.
 -- Group the result set on match number. Return match number.
@@ -38,8 +34,7 @@ WHERE
      team_id = (
         SELECT country_id  -- Get the country_id of Poland
         FROM country
-        WHERE country_name LIKE 'Poland'
-    )
+        WHERE country_name LIKE 'Poland')
 GROUP BY match_no  -- Group by match number to aggregate the teams involved in each match
 HAVING COUNT(DISTINCT team_id) = 2;  -- Only include matches where both teams (Germany and Poland) participated
 ----------------------------------------------------------------------------
@@ -59,8 +54,25 @@ WHERE EXISTS (           -- Check if the subquery returns any rows, indicating t
         HAVING COUNT(DISTINCT md.team_id) = 2  -- Only include matches where both teams (Portugal and Hungary) are present
     );
 ----------------------------------------------------------------------------
+-- Q6:Write to find the players who scored the most goals in each match. 
+-- Group the result set on match number, country name and player name. 
+-- Sort the result-set in ascending order by match number.
+-- Return match number, country name, player name and number of matches.
 
-
+WITH PlayerGoalCounts AS (
+    -- Create a CTE to count goals for each player in each match
+    SELECT 
+        gd.match_no,                      -- The match number
+        c.country_name,                   -- The country name
+        pm.player_name,                   -- The player's name
+        COUNT(gd.goal_id) AS goal_count   -- The number of goals scored by the player
+    FROM goal_details gd
+    JOIN player_mast pm 
+    ON gd.player_id = pm.player_id       -- Join to get player details
+    JOIN country c 
+    ON pm.team_id = c.country_id         -- Join to get the player's country
+    GROUP BY 
+        gd.match_no, c.country_name, pm.player_name    -- Group by match number, country, and player)
 
 
 

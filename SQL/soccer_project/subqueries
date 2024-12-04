@@ -54,27 +54,91 @@ WHERE EXISTS (           -- Check if the subquery returns any rows, indicating t
         HAVING COUNT(DISTINCT md.team_id) = 2  -- Only include matches where both teams (Portugal and Hungary) are present
     );
 ----------------------------------------------------------------------------
--- Q6:Write to find the players who scored the most goals in each match. 
+-- Q6:Write to find the players who scored goals in each match. 
+-- Group the result set on match number, country name and player name. 
+-- Sort the result-set in ascending order by match number.
+-- Return match number, country name, player name and number of matches.
+
+SELECT 
+    c.country_name,                                 -- Select the country name
+    gd.match_no,                                    -- Select the match number
+    pm.player_name,                                 -- Select the player's name
+    COUNT(gd.goal_id) AS goal_count                 -- Count the number of goals scored by each player
+FROM 
+    goal_details gd                                 -- From the goal_details table
+JOIN 
+    country c ON gd.team_id = c.country_id          -- Join country to get the country name
+JOIN 
+    player_mast pm ON gd.player_id = pm.player_id   -- Join player_mast to get the player name
+GROUP BY 
+    c.country_name, gd.match_no, pm.player_name     -- Group by country, match, and player
+ORDER BY 
+    gd.match_no ASC;                                -- Sort the result by match number in ascending order
+
+----------------------------------------------------------------------------
+-- Q?: Write to find the players who scored the most goals in each match. 
 -- Group the result set on match number, country name and player name. 
 -- Sort the result-set in ascending order by match number.
 -- Return match number, country name, player name and number of matches.
 
 WITH PlayerGoalCounts AS (
-    -- Create a CTE to count goals for each player in each match
+    -- Step 1: Count goals for each player in each match
     SELECT 
-        gd.match_no,                      -- The match number
-        c.country_name,                   -- The country name
-        pm.player_name,                   -- The player's name
-        COUNT(gd.goal_id) AS goal_count   -- The number of goals scored by the player
-    FROM goal_details gd
-    JOIN player_mast pm 
-    ON gd.player_id = pm.player_id       -- Join to get player details
-    JOIN country c 
-    ON pm.team_id = c.country_id         -- Join to get the player's country
+        gd.match_no, 
+        c.country_name, 
+        pm.player_name, 
+        COUNT(gd.goal_id) AS goal_count
+    FROM 
+        goal_details gd
+    JOIN 
+        country c ON gd.team_id = c.country_id
+    JOIN 
+        player_mast pm ON gd.player_id = pm.player_id
     GROUP BY 
-        gd.match_no, c.country_name, pm.player_name    -- Group by match number, country, and player)
+        gd.match_no, c.country_name, pm.player_name
+)
+-- Step 2: Find players who scored the maximum goals in each match
+SELECT 
+    pgc.match_no, 
+    pgc.country_name, 
+    pgc.player_name, 
+    pgc.goal_count
+FROM 
+    PlayerGoalCounts pgc
+-- Step 3: Filter out only players with the maximum goals per match
+WHERE 
+    pgc.goal_count = (
+        SELECT MAX(goal_count) 
+        FROM PlayerGoalCounts 
+    )
+ORDER BY 
+    pgc.match_no ASC;
 
+----------------------------------------------------------------------------
+-- Q7:Write to find the highest audience match. Return country name of the teams.
+-- Step 1: Get the audience for each match and the country names involved
+WITH audence_country_table AS (
+                            SELECT 
+                                c.country_name, 
+                                mm.match_no,             
+                                mm.audence               
+                            FROM 
+                                match_details md
+                            JOIN 
+                                match_mast mm ON md.match_no = mm.match_no
+                            JOIN 
+                                country c ON md.team_id = c.country_id)
 
+-- Step 2: Find the country names for matches with the highest audience
+
+SELECT DISTINCT act.country_name
+FROM audence_country_table AS act
+WHERE act.match_no IN (
+                        SELECT match_no
+                        FROM audence_country_table
+                        WHERE audence = (SELECT MAX(audence) FROM audence_country_table));
+
+----------------------------------------------------------------------------
 
 
 

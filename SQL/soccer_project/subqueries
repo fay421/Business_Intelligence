@@ -139,8 +139,39 @@ WHERE act.match_no IN (
                         WHERE audence = (SELECT MAX(audence) FROM audence_country_table));
 
 ----------------------------------------------------------------------------
+-- Q8: Write to find the player who scored the last goal for Portugal against Hungary. Return player name.
 
+-- Step 1: Create a CTE to find all goals scored by Portugal and Hungary
+WITH lastplayertable AS (
+    SELECT 
+        c.country_name, 
+        pm.player_name,
+        gd.goal_time,
+        gd.match_no
+    FROM country c 
+    JOIN goal_details gd ON c.country_id = gd.team_id
+    JOIN player_mast pm ON gd.player_id = pm.player_id
+    WHERE c.country_name IN ('Portugal', 'Hungary')  -- Filter for Portugal or Hungary
+),
+-- Step 2: Find the match numbers where both Portugal and Hungary participated
+matched_games AS (
+    
+    SELECT match_no
+    FROM lastplayertable
+    GROUP BY match_no
+    HAVING 
+        COUNT(DISTINCT country_name) = 2  -- Ensure both countries participated in the match
+)
+-- Step 3: Select the player who scored the last goal in that match
+SELECT lpt.player_name
+FROM lastplayertable lpt
+JOIN matched_games mg 
+ON lpt.match_no = mg.match_no
+WHERE lpt.goal_time = (SELECT  MAX(goal_time)
+                        FROM lastplayertable
+                        WHERE  match_no = lpt.match_no);
 
+----------------------------------------------------------------------------
 
 
 

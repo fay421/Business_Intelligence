@@ -189,6 +189,62 @@ JOIN country c ON md.team_id = c.country_id
 WHERE md.match_no = (SELECT match_no FROM second_highest_stop2);
 
 ----------------------------------------------------------------------------
+-- Q11:Write to find the teams played the match where second highest stoppage time 
+-- had been added in second half of play. Return match_no, play_date, stop2_sec. 
 
+WITH second_highest_stop2 AS
+					(SELECT match_no,stop2_sec,play_date
+					FROM match_mast
+					WHERE stop2_sec < (SELECT MAX(stop2_sec)
+									   FROM match_mast)
+					ORDER BY stop2_sec DESC
+					LIMIT 1)
+SELECT shs.match_no, shs.play_date, shs.stop2_sec
+FROM second_highest_stop2 AS shs;
+----------------------------------------------------------------------------
+* important tips* 
+-- *Q16: Write to find the goalkeeper for Italy in penalty shootout against Germany in Football EURO cup 2016. 
+-- Return goalkeeper name.
 
+*Using 3 CTEs:
+WITH GermanItalianMatches AS (  -- Create a CTE named 'GermanItalianMatches' to find match numbers involving both Germany and Italy.
+    SELECT match_no  -- Select match numbers from the 'penalty_gk' table for further filtering.
+    FROM penalty_gk
+    WHERE team_id IN (  -- Filter matches where the team is either Germany or Italy, based on the country_id.
+        SELECT country_id
+        FROM country
+        WHERE country_name LIKE 'Germany'
+        OR country_name LIKE 'Italy'
+    )
+    GROUP BY match_no  -- Group the results by match number to identify distinct matches.
+    HAVING COUNT(DISTINCT team_id) = 2  -- Ensure that both Germany and Italy are involved in each selected match.
+),
+ItalianGoalkeeper AS (  -- Create a CTE named 'ItalianGoalkeeper' to find the goalkeeper for Italy in the selected matches.
+    SELECT player_gk, match_no  -- Select goalkeeper IDs and match numbers from the 'penalty_gk' table.
+    FROM penalty_gk
+    WHERE match_no IN (SELECT match_no FROM GermanItalianMatches)  -- Filter matches that are in the 'GermanItalianMatches' CTE.
+      AND team_id = (  -- Ensure that the selected goalkeeper is from Italy by matching the country_id.
+          SELECT country_id
+          FROM country
+          WHERE country_name LIKE 'Italy'
+      )
+),
+GoalkeeperDetails AS (  -- Create a CTE named 'GoalkeeperDetails' to isolate the goalkeeper ID for further lookup.
+    SELECT player_gk  -- Select the goalkeeper ID from the 'ItalianGoalkeeper' CTE.
+    FROM ItalianGoalkeeper
+)
+SELECT player_name  -- Retrieve the player's name from the 'player_mast' table based on the goalkeeper ID.
+FROM player_mast
+WHERE player_id = (SELECT player_gk FROM GoalkeeperDetails);  -- Match the player_id with the goalkeeper ID obtained from the 'GoalkeeperDetails' CTE.
+----------------------------------------------------------------------------
+-- Q17: Write to find the number of goals Germany scored at the tournament.
 
+WITH German_Goals_Scores AS (SELECT team_id,COUNT(goal_half) AS count
+							FROM goal_details
+                            WHERE team_id =(SELECT country_id
+											FROM country
+                                            WHERE country_name =  'Germany')
+							GROUP BY team_id)
+SELECT ggs.count
+FROM German_Goals_Scores ggs;
+----------------------------------------------------------------------------

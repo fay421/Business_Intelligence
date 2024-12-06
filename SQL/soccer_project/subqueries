@@ -248,3 +248,45 @@ WITH German_Goals_Scores AS (SELECT team_id,COUNT(goal_half) AS count
 SELECT ggs.count
 FROM German_Goals_Scores ggs;
 ----------------------------------------------------------------------------
+-- Q2: Write to find the maximum penalty shots taken by the teams. 
+-- Return country name, maximum penalty shots.
+
+*EASY PROBLEM!
+ -- Define a Common Table Expression (CTE) named 'penalty_shots' to calculate the number of penalty shots for each team.
+WITH penalty_shots AS ( 
+    SELECT ps.team_id, COUNT(ps.score_goal) AS shots, c.country_name  -- Select team ID, count the number of penalty shots (both scored and missed), and include the country name.
+    FROM penalty_shootout ps
+    JOIN country c                                                    -- Join 'penalty_shootout' with 'country' to get the country name for each team.
+    ON ps.team_id = c.country_id
+    WHERE ps.score_goal = 'Y' OR ps.score_goal = 'N'                  -- Filter records to include only valid penalty shots, either scored ('Y') or missed ('N').
+    GROUP BY ps.team_id, c.country_name)                              -- Group by team ID and country name to get a unique count of penalty shots for each team.
+
+SELECT pss.country_name, pss.shots                                    -- Select the country name and the number of penalty shots from the CTE 'penalty_shots'.
+FROM penalty_shots pss
+WHERE pss.shots = (                                                   -- Filter to select the team(s) with the maximum number of penalty shots.
+    SELECT MAX(shots)                                                 -- Find the maximum number of penalty shots from the CTE 'penalty_shots'.
+    FROM penalty_shots);
+
+----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,1 +1,44 @@
+-- Q2:Find the number of goals scored by each team in each match during normal play. 
+-- Return match number, country name and goal score.
 
+-- Define a CTE to calculate the goals scored by each team in each match
+WITH goal_count AS (  
+    SELECT 
+        md.match_no,                                -- Select the match number
+        c.country_name,                             -- Get the country name associated with the team
+        SUM(md.goal_score) AS goal_score            -- Sum up the goals scored by the team in normal play
+    FROM match_details md
+    JOIN country c                                  -- Join 'play_details' with 'country' to get the country name for each team
+    ON md.team_id = c.country_id
+    GROUP BY md.match_no, c.country_name)           -- Group by match number and country name to calculate goal scores for each team)
+SELECT match_no, country_name, goal_score           -- Select the match number, country name, and total goal score
+FROM goal_count
+ORDER BY match_no, country_name;                    -- Order the results by match number and country name
+----------------------------------------------------------------------------------
+--Q4: Find out who scored the most goals in the 2016 Euro Cup. 
+-- Return player name, country name and highest individual scorer.
+
+-- Define a CTE to calculate the count of occurrences for each player and country
+WITH player_counts AS (
+    SELECT 
+        pm.player_name, 
+        c.country_name, 
+        COUNT(pm.player_name) AS player_count                -- Calculate the count of occurrences for each player
+    FROM goal_details gd
+    JOIN player_mast pm ON gd.player_id = pm.player_id       -- Join 'goal_details' with 'player_mast' using player_id
+    JOIN country c ON pm.team_id = c.country_id              -- Join the result with 'country' using team_id and country_id
+    GROUP BY c.country_name, pm.player_name),                -- Group the results by country_name and player_name
+
+max_player_count AS (
+    SELECT MAX(player_count) AS max_count                    -- Find the maximum player_count
+    FROM player_counts)
+
+SELECT 
+    pc.player_name, 
+    pc.country_name, 
+    pc.player_count                                          -- Select player_name, country_name, and their count of occurrences
+FROM player_counts pc
+WHERE pc.player_count = (                                    -- Filter to include only those with player_count equal to the maximum player_count
+    SELECT max_count
+    FROM max_player_count);
+----------------------------------------------------------------------------------

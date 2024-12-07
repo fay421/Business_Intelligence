@@ -248,7 +248,7 @@ WITH German_Goals_Scores AS (SELECT team_id,COUNT(goal_half) AS count
 SELECT ggs.count
 FROM German_Goals_Scores ggs;
 ----------------------------------------------------------------------------
--- Q2: Write to find the maximum penalty shots taken by the teams. 
+-- Q25: Write to find the maximum penalty shots taken by the teams. 
 -- Return country name, maximum penalty shots.
 
 *EASY PROBLEM!
@@ -268,7 +268,25 @@ WHERE pss.shots = (                                                   -- Filter 
     FROM penalty_shots);
 
 ----------------------------------------------------------------------------
+Q28: Write query to determine the match number where the most penalty shots were taken. 
+-- Return match number, country name.
 
+-- Define a CTE to calculate the number of penalty shots for each match and country
+WITH score_goal_count AS (
+    SELECT match_no, country_name, COUNT(score_goal) AS shots             -- Select match number, country name, and count the number of penalty shots
+    FROM penalty_shootout ps
+    JOIN country c                                                        -- Join 'penalty_shootout' table with 'country' table to get the country name for each team
+    ON ps.team_id = c.country_id
+    GROUP BY match_no, country_name)                                      -- Group by match number and country name to get a unique count for each combination
+
+-- Select the match and country with the highest number of penalty shots
+SELECT match_no, country_name
+FROM score_goal_count AS sgc
+WHERE sgc.shots = (                                                       -- Filter to select the match(es) with the maximum number of penalty shots
+    SELECT MAX(shots)                                                     -- Find the maximum number of penalty shots from the CTE 'score_goal_count'
+    FROM score_goal_count)
+ORDER BY country_name;                                                    -- Order the results by country name
+----------------------------------------------------------------------------
 
 
 

@@ -42,3 +42,88 @@ WHERE pc.player_count = (                                    -- Filter to includ
     SELECT max_count
     FROM max_player_count);
 ----------------------------------------------------------------------------------
+-- Q25: Find the venue where the most goals have been scored. Return venue name, number of goals.
+
+** The number of goals scored in matches at that venue.** ergo... COUNT(venue)= COUNT(goal_scored)
+
+-- Define a CTE to calculate the count of goals scored at each venue
+WITH venue_goal_count AS (
+    SELECT 
+        venue_name,                                                         -- Select the venue name
+        COUNT(venue_name) AS goal_count                                     -- Count the occurrences of goals scored at each venue
+    FROM 
+        goal_details
+    JOIN 
+        country ON goal_details.team_id = country.country_id                -- Join soccer_country with goal_details
+    JOIN 
+        match_mast ON goal_details.match_no = match_mast.match_no           -- Join match_mast with goal_details
+    JOIN 
+        venue ON match_mast.venue_id = venue.venue_id                       -- Join soccer_venue with match_mast
+    GROUP BY 
+        venue_name  -- Group by venue name to calculate counts
+),
+max_goal_count AS (
+    SELECT MAX(goal_count) AS max_count                                     -- Find the maximum goal count across venues
+    FROM venue_goal_count
+)
+-- Select the venue(s) with the maximum goal count
+SELECT 
+    vgc.venue_name, 
+    vgc.goal_count
+FROM venue_goal_count vgc
+WHERE vgc.goal_count = (SELECT max_count FROM max_goal_count);               -- Filter for venue(s) with the maximum goal count
+----------------------------------------------------------------------------------
+Q32: Find the captains of all the matches in the tournament. Return match number, country name, player name, jersey number and position to play. 
+
+-- Define a CTE to get details of match captains
+WITH match_captain_details AS (
+    SELECT 
+        mc.match_no,  -- Match number from match_captain table
+        c.country_name,  -- Country name from soccer_country table
+        pm.player_name,  -- Player name from player_mast table
+        pm.jersey_no,  -- Jersey number from player_mast table
+        pm.posi_to_play  -- Position to play from player_mast table
+    FROM 
+        match_captain mc  -- Specifying the match_captain table
+    JOIN 
+        country c ON mc.team_id = c.country_id  -- Joining soccer_country with match_captain based on team_id
+    JOIN 
+        player_mast pm ON mc.player_captain = pm.player_id  -- Joining player_mast with match_captain based on player_captain
+)
+-- Select all details from the CTE and order by match number
+SELECT 
+    match_no, 
+    country_name, 
+    player_name, 
+    jersey_no, 
+    posi_to_play
+FROM 
+    match_captain_details
+ORDER BY 
+    match_no;  -- Order the results by match number
+----------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

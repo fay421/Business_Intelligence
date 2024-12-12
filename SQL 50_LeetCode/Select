@@ -150,6 +150,59 @@ ORDER BY id;                                              -- Sort the result by 
 2- WHERE author_id = viewer_id: Focuses on cases where the same person authored and viewed the article.
 3- ORDER BY: Ensures that the results are sorted in an orderly fashion by the author ID.
 ************************************************************************************************************************************
+Q5:Invalid Tweets: 
+
+Write a solution to find the IDs of the invalid tweets. The tweet is invalid if the number of characters used in the content of the tweet is strictly greater than 15.
+Return the result table in any order.
+
+Example 1:
+
+Input: 
+Tweets table:
++----------+-----------------------------------+
+| tweet_id | content                           |
++----------+-----------------------------------+
+| 1        | Let us Code                       |
+| 2        | More than fifteen chars are here! |
++----------+-----------------------------------+
+Output: 
++----------+
+| tweet_id |
++----------+
+| 2        |
++----------+
+-------------------------------------------------------------------------------------------------------------------------
+Solution:
+
+SELECT  tweet_id
+FROM tweets
+WHERE LENGTH(content) > 15;
+
+🎯Tips: 
+1- Use the LENGTH function to evaluate the size of string columns, which is useful for filtering text-based data.
+************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

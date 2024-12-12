@@ -1,1 +1,71 @@
+Q1: Replace employee ID with the unique identifier
+
+Write a solution to show the unique ID of each user, If a user does not have a unique ID replace just show null.
+Return the result table in any order.
+
+Example 1:
+
+Input: 
+Employees table:
++----+----------+
+| id | name     |
++----+----------+
+| 1  | Alice    |
+| 7  | Bob      |
+| 11 | Meir     |
+| 90 | Winston  |
+| 3  | Jonathan |
++----+----------+
+EmployeeUNI table:
++----+-----------+
+| id | unique_id |
++----+-----------+
+| 3  | 1         |
+| 11 | 2         |
+| 90 | 3         |
++----+-----------+
+Output: 
++-----------+----------+
+| unique_id | name     |
++-----------+----------+
+------------------------------------------------------------------------------------
+Solution:
+
+SELECT IFNULL(employeeuni.unique_id, NULL) AS unique_id,                   -- Selects the unique_id from EmployeeUNI or NULL if no match
+       employees.name                                                      -- Selects the name of the employee from Employees
+FROM employees                                                             -- Specifies the Employees table as the main (left) table
+LEFT JOIN employeeuni                                                      -- Performs a LEFT JOIN to include all rows from Employees
+ON employees.id = employeeuni.id;                                          -- Matches rows where the id from Employees equals the id from EmployeeUNI
+------------------------------------------------------------------------------------
+🎯 Tips:
+
+1-Why Use LEFT JOIN?🤷‍♀️
+⁕ Use LEFT JOIN when you need all rows from the left table (Employees), regardless of whether there is a match in the right table (EmployeeUNI).
+2-IFNULL Clarification:
+⁕ The IFNULL function is optional in this case because LEFT JOIN will already produce NULL for unmatched rows. However, including it explicitly can make the intent 
+clearer.
+3-Improving Readability:
+⁕ If you don’t need to explicitly use IFNULL, you can simplify the query by directly selecting employeeuni.unique_id since unmatched rows will naturally result in 
+NULL.
+4-Potential Use Case:
+⁕ This query is helpful for identifying employees who don’t have an associated unique_id in the EmployeeUNI table (those rows will have NULL in the unique_id column).
+
+*********************************************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

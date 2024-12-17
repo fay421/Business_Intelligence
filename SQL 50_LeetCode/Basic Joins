@@ -291,19 +291,165 @@ This query is applicable in real-world scenarios like manufacturing or data proc
 🎇Code Modularity:
 The CTE allows for reusability and easier debugging, making the query modular and maintainable.
 ***************************************************************************************************************************************************
+Q6: Employee bonus:
 
+Write a solution to report the name and bonus amount of each employee with a bonus less than 1000.
+Return the result table in any order.
 
+Example 1:
 
+Input: 
+Employee table:
++-------+--------+------------+--------+
+| empId | name   | supervisor | salary |
++-------+--------+------------+--------+
+| 3     | Brad   | null       | 4000   |
+| 1     | John   | 3          | 1000   |
+| 2     | Dan    | 3          | 2000   |
+| 4     | Thomas | 3          | 4000   |
++-------+--------+------------+--------+
+Bonus table:
++-------+-------+
+| empId | bonus |
++-------+-------+
+| 2     | 500   |
+| 4     | 2000  |
++-------+-------+
+Output: 
++------+-------+
+| name | bonus |
++------+-------+
+| Brad | null  |
+| John | null  |
+| Dan  | 500   |
++------+-------+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution:
+SELECT e.name,                                                  -- Selects the name of the employee from the Employee table
+       b.bonus                                                  -- Selects the bonus amount from the Bonus table (if available)
+FROM employee e                                                 -- Specifies the Employee table (aliased as 'e') as the primary table
+LEFT JOIN bonus b                                               -- Performs a LEFT JOIN to include all employees, even those without a bonus
+ON e.empId = b.empId                                            -- Matches rows where Employee.empId equals Bonus.empId
+WHERE b.bonus < 1000 OR b.bonus IS NULL;                        -- Filters employees with a bonus less than 1000 or no bonus at all (NULL)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯 Tips: 
+Why Use a LEFT JOIN?🤷‍♀️
+1-A LEFT JOIN ensures all employees are included in the results, even if they have no bonus. This is critical for identifying employees without bonuses.
 
+2-Handling NULL Values:
+When working with a LEFT JOIN, unmatched rows in the right table (Bonus) will have NULL values. 
+Always explicitly check for IS NULL in the WHERE clause to include those rows.
 
+3-Filtering Multiple Conditions:
+The query combines two conditions using OR:
+Employees with bonus < 1000.
+Employees with no bonus (b.bonus IS NULL).
 
+4-Practical Use Case:
+This query is useful for generating reports or identifying employees with low or no bonuses, which could be critical for HR or business analysis.
 
+👌Key Takeaways:
+🎇LEFT JOIN is critical for including unmatched rows.
+🎇Always use IS NULL to check for missing records in the right table.
+🎇Combining multiple conditions (<, IS NULL) is an effective way to target specific data scenarios.
+🎇This query demonstrates handling real-world data where some records may be incomplete or missing.
+***************************************************************************************************************************************************
+Q7: Students and examinations:
 
+Write a solution to find the number of times each student attended each exam.
+Return the result table ordered by student_id and subject_name.
 
+Input: 
+Students table:
++------------+--------------+
+| student_id | student_name |
++------------+--------------+
+| 1          | Alice        |
+| 2          | Bob          |
+| 13         | John         |
+| 6          | Alex         |
++------------+--------------+
+Subjects table:
++--------------+
+| subject_name |
++--------------+
+| Math         |
+| Physics      |
+| Programming  |
++--------------+
+Examinations table:
++------------+--------------+
+| student_id | subject_name |
++------------+--------------+
+| 1          | Math         |
+| 1          | Physics      |
+| 1          | Programming  |
+| 2          | Programming  |
+| 1          | Physics      |
+| 1          | Math         |
+| 13         | Math         |
+| 13         | Programming  |
+| 13         | Physics      |
+| 2          | Math         |
+| 1          | Math         |
++------------+--------------+
+Output: 
++------------+--------------+--------------+----------------+
+| student_id | student_name | subject_name | attended_exams |
++------------+--------------+--------------+----------------+
+| 1          | Alice        | Math         | 3              |
+| 1          | Alice        | Physics      | 2              |
+| 1          | Alice        | Programming  | 1              |
+| 2          | Bob          | Math         | 1              |
+| 2          | Bob          | Physics      | 0              |
+| 2          | Bob          | Programming  | 1              |
+| 6          | Alex         | Math         | 0              |
+| 6          | Alex         | Physics      | 0              |
+| 6          | Alex         | Programming  | 0              |
+| 13         | John         | Math         | 1              |
+| 13         | John         | Physics      | 1              |
+| 13         | John         | Programming  | 1              |
++------------+--------------+--------------+----------------+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution:
+SELECT st.student_id,                                                 -- Selects the student ID
+       st.student_name,                                               -- Selects the student's name
+       s.subject_name,                                                -- Selects the subject name
+       COUNT(e.subject_name) AS attended_exams                        -- Counts the number of times the student attended the subject exam
+FROM students st                                                      -- Refers to the Students table (aliased as 'st')
+CROSS JOIN subjects s                                                 -- Generates all possible combinations of students and subjects
+LEFT JOIN examinations e                                              -- Performs a LEFT JOIN to match students' exams if they exist
+ON st.student_id = e.student_id                                       -- Matches the student ID between Examinations and Students
+AND s.subject_name = e.subject_name                                   -- Matches the subject name between Examinations and Subjects
+GROUP BY st.student_id, st.student_name, s.subject_name               -- Groups results by student and subject for aggregation
+ORDER BY st.student_id, s.subject_name;                               -- Orders the results by student ID and subject name
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯 Tips:
+Why Use CROSS JOIN?🤷‍♀️
+1-The CROSS JOIN ensures that all combinations of students and subjects are included, even if no records exist in the Examinations table.
+It is essential for identifying students who did not attend any exams for certain subjects.
 
+Why Use LEFT JOIN?🤷‍♀️
+2-The LEFT JOIN preserves all rows from the Cartesian product (students and subjects) while including only matching rows from the Examinations table.
+This allows the query to handle missing exam records and count them as 0.
 
+Handling Missing Data:
+3-COUNT(e.subject_name) works because COUNT ignores NULL values, which naturally results in 0 for subjects with no exams.
 
+Performance Consideration:
+4-Be cautious with CROSS JOIN on large datasets, as it generates a large number of rows. However, in this case, it is appropriate for the requirement.
 
+👌Key Takeaways:
+
+🎇Combining CROSS JOIN and LEFT JOIN:
+This query showcases how to analyze missing data by combining all possible combinations (CROSS JOIN) and checking for matches with LEFT JOIN.
+🎇Practical Use Case:
+Useful for generating reports where full coverage of data (e.g., all students for all subjects) is required, regardless of missing records.
+🎇Clarity and Modularity:
+Using proper aliases (st, s, e) and organized clauses improves readability and maintainability.
+🎇Scalable Query:
+Works well for small to moderately sized tables but requires performance consideration for very large datasets.
+***************************************************************************************************************************************************
 
 
 

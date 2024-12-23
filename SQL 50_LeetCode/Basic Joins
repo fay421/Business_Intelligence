@@ -450,6 +450,170 @@ Using proper aliases (st, s, e) and organized clauses improves readability and m
 🎇Scalable Query:
 Works well for small to moderately sized tables but requires performance consideration for very large datasets.
 ***************************************************************************************************************************************************
+Q8: Managers with at least 5 direct reports:
+
+Write a solution to find managers with at least five direct reports.
+
+Return the result table in any order.
+
+Example 1:
+
+Input: 
+Employee table:
++-----+-------+------------+-----------+
+| id  | name  | department | managerId |
++-----+-------+------------+-----------+
+| 101 | John  | A          | null      |
+| 102 | Dan   | A          | 101       |
+| 103 | James | A          | 101       |
+| 104 | Amy   | A          | 101       |
+| 105 | Anne  | A          | 101       |
+| 106 | Ron   | B          | 101       |
++-----+-------+------------+-----------+
+Output: 
++------+
+| name |
++------+
+| John |
++------+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution:
+SELECT a.name                         -- Selects the name of the employee (manager)
+FROM employee a                       -- Refers to the Employee table as 'a', representing managers
+JOIN employee b                       -- Self-joins the Employee table as 'b', representing subordinates
+ON a.id = b.managerId                 -- Matches rows where 'a' (manager) is linked to 'b' (subordinate) via managerId
+GROUP BY a.id, a.name                 -- Groups results by manager's ID and name to calculate aggregates
+HAVING COUNT(b.managerId) >= 5;       -- Filters to include only managers with 5 or more subordinates
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯 Tips:
+Purpose:
+1-This query identifies employees (managers) who manage at least 5 other employees and returns their names.
+
+Why Use Self-Join?🤷‍♀️
+2-The JOIN operation is a self-join because the query compares the same table (employee) to itself.
+It links the managerId in table b (subordinates) to the id in table a (managers), allowing hierarchical relationships to be queried.
+
+Why Include a.id in GROUP BY but Not in SELECT?🤷‍♀️
+3-Including a.id in GROUP BY ensures that each manager is uniquely identified for grouping, even if multiple managers have the same name.
+a.id is not in the SELECT because the query only needs to return the manager's name.
+
+HAVING Clause:
+4-The HAVING clause filters groups to include only managers who manage at least 5 employees. It works on aggregated data (COUNT).
+
+👌Key Takeaways:
+
+🎇Self-Joins:
+Demonstrates how to use self-joins to query hierarchical relationships like manager-subordinate structures.
+
+🎇Best Practices:
+Include only necessary columns in the SELECT clause for clarity.
+Use GROUP BY to handle grouping, even if some columns are not part of the final output.
+
+🎇Performance Consideration:
+Ensure indexes on id and managerId for efficient join and group-by operations on large datasets.
+
+🎇Reusability:
+This pattern can be adapted for other hierarchical queries, such as finding top-performing managers or employees under specific managers.
+***************************************************************************************************************************************************
+Q9: Confirmation rate:
+Write a solution to find the confirmation rate of each user.
+Return the result table in any order.
+
+Example 1:
+
+Input: 
+Signups table:
++---------+---------------------+
+| user_id | time_stamp          |
++---------+---------------------+
+| 3       | 2020-03-21 10:16:13 |
+| 7       | 2020-01-04 13:57:59 |
+| 2       | 2020-07-29 23:09:44 |
+| 6       | 2020-12-09 10:39:37 |
++---------+---------------------+
+Confirmations table:
++---------+---------------------+-----------+
+| user_id | time_stamp          | action    |
++---------+---------------------+-----------+
+| 3       | 2021-01-06 03:30:46 | timeout   |
+| 3       | 2021-07-14 14:00:00 | timeout   |
+| 7       | 2021-06-12 11:57:29 | confirmed |
+| 7       | 2021-06-13 12:58:28 | confirmed |
+| 7       | 2021-06-14 13:59:27 | confirmed |
+| 2       | 2021-01-22 00:00:00 | confirmed |
+| 2       | 2021-02-28 23:59:59 | timeout   |
++---------+---------------------+-----------+
+Output: 
++---------+-------------------+
+| user_id | confirmation_rate |
++---------+-------------------+
+| 6       | 0.00              |
+| 3       | 0.00              |
+| 7       | 1.00              |
+| 2       | 0.50              |
++---------+-------------------+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution:
+
+-- Selects the user ID from the Signups table
+-- Rounds the calculated confirmation rate to 2 decimal places  
+-- Handles NULL values by returning 0 if no confirmation records exist
+
+SELECT s.user_id, ROUND( IFNULL( COUNT(CASE WHEN c.action = 'confirmed' THEN 1 END) / COUNT(c.user_id),0), 2) AS confirmation_rate                                            
+
+FROM signups s                                                 -- Main table containing all user signups
+LEFT JOIN confirmations c                                      -- LEFT JOIN ensures all signups are included, even without confirmations
+ON s.user_id = c.user_id                                       -- Matches Signups with Confirmations based on user ID
+GROUP BY s.user_id;                                            -- Groups results by user ID to calculate metrics for each user
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯 Tips:
+Purpose:
+1-This query calculates the confirmation rate for each user as the ratio of confirmed actions to total actions, rounded to two decimal places.
+Includes users who have no confirmation records by ensuring their confirmation rate is 0.
+
+Handling NULL Values with IFNULL:
+2-The IFNULL function ensures that users without any confirmation records (resulting in NULL) are assigned a confirmation rate of 0.
+
+CASE WHEN for Conditional Aggregation:
+3-The CASE expression counts only rows where the action is 'confirmed'. This conditional aggregation ensures precise calculations.
+
+COUNT Logic:
+4-COUNT(CASE WHEN c.action = 'confirmed' THEN 1 END): Counts only confirmed actions.
+
+COUNT(c.user_id): Counts all confirmation records for the user (both confirmed and timeout).
+5-Division of these two values gives the confirmation rate.
+
+LEFT JOIN Usage:
+6-Ensures all users from the Signups table are included, even if they do not have any associated confirmation records.
+
+Rounding:
+7-ROUND(..., 2) rounds the confirmation rate to 2 decimal places for better readability.
+
+GROUP BY:
+8-Groups the data by s.user_id, ensuring that the calculations (counts and rates) are performed for each user.
+
+👌Key Takeaways:
+
+🎇Inclusion of All Users:
+Using LEFT JOIN ensures that users without confirmations are accounted for, showcasing robust query design.
+
+🎇Conditional Aggregation:
+Demonstrates the use of CASE WHEN for counting specific conditions in aggregate functions.
+
+🎇Real-World Use Case:
+This query is applicable in analyzing user behavior, such as calculating conversion or confirmation rates for signups.
+
+🎇Best Practices:
+Handles NULL values gracefully with IFNULL.
+Uses ROUND for cleaner, user-friendly results.
+***************************************************************************************************************************************************
+
+
+
+
+
+
 
 
 

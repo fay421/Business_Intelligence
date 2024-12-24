@@ -1,1 +1,202 @@
+Q1:Not boring movies:
+
+Write a solution to report the movies with an odd-numbered ID and a description that is not "boring".
+Return the result table ordered by rating in descending order.
+
+Example 1:
+
+Input: 
+Cinema table:
++----+------------+-------------+--------+
+| id | movie      | description | rating |
++----+------------+-------------+--------+
+| 1  | War        | great 3D    | 8.9    |
+| 2  | Science    | fiction     | 8.5    |
+| 3  | irish      | boring      | 6.2    |
+| 4  | Ice song   | Fantacy     | 8.6    |
+| 5  | House card | Interesting | 9.1    |
++----+------------+-------------+--------+
+Output: 
++----+------------+-------------+--------+
+| id | movie      | description | rating |
++----+------------+-------------+--------+
+| 5  | House card | Interesting | 9.1    |
+| 1  | War        | great 3D    | 8.9    |
++----+------------+-------------+--------+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution:
+
+SELECT *                               -- Selects all columns from the Cinema table
+FROM cinema                            -- Specifies the Cinema table as the data source
+WHERE id % 2 != 0                      -- Filters movies with an odd id (id is not divisible by 2)
+  AND description <> 'boring'          -- Excludes movies where the description is 'boring'
+ORDER BY rating DESC;                  -- Orders the results by rating in descending order
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips!
+1- Purpose:
+This query retrieves movies with odd IDs, excludes those described as 'boring', and sorts them by rating in descending order.
+
+2-Why Use Modulo (%):🤷‍♀
+The modulo operator is a common and efficient way to filter odd or even values. It's simple and easy to understand.
+
+3-<> for Exclusion:
+<> is SQL's standard inequality operator, ensuring the query excludes unwanted rows (e.g., movies described as 'boring').
+
+4-Best Practices:
+Use SELECT * sparingly and specify required columns for better performance and clarity.
+Always document the logic behind filters (e.g., why odd IDs are selected).
+
+5-Real-World Use Case:
+This query is suitable for scenarios like filtering and ranking movies in a database for recommendations.
+*************************************************************************************************************************************************************************************
+Q2: Average selling price:
+
+Write a solution to find the average selling price for each product. average_price should be rounded to 2 decimal places. 
+If a product does not have any sold units, its average selling price is assumed to be 0.
+Return the result table in any order.
+
+Example 1:
+
+Input: 
+Prices table:
++------------+------------+------------+--------+
+| product_id | start_date | end_date   | price  |
++------------+------------+------------+--------+
+| 1          | 2019-02-17 | 2019-02-28 | 5      |
+| 1          | 2019-03-01 | 2019-03-22 | 20     |
+| 2          | 2019-02-01 | 2019-02-20 | 15     |
+| 2          | 2019-02-21 | 2019-03-31 | 30     |
++------------+------------+------------+--------+
+UnitsSold table:
++------------+---------------+-------+
+| product_id | purchase_date | units |
++------------+---------------+-------+
+| 1          | 2019-02-25    | 100   |
+| 1          | 2019-03-01    | 15    |
+| 2          | 2019-02-10    | 200   |
+| 2          | 2019-03-22    | 30    |
++------------+---------------+-------+
+Output: 
++------------+---------------+
+| product_id | average_price |
++------------+---------------+
+| 1          | 6.96          |
+| 2          | 16.96         |
++------------+---------------+
+
+Solution:
+
+-- Selects the product ID from the Prices table
+-- Rounds the calculated average price to 2 decimal places
+-- Handles NULL values by returning 0 if there are no matching units sold
+SELECT p.product_id, ROUND( IFNULL( SUM(p.price * u.units) / SUM(u.units), 0), 2) AS average_price     -- Alias for the calculated average price
+                                         
+FROM prices p                                                                                          -- Prices table containing product prices and date ranges
+LEFT JOIN unitssold u                                                                                  -- LEFT JOIN ensures all products are included, even if no units were sold
+ON p.product_id = u.product_id                                                                         -- Matches product IDs between Prices and UnitsSold
+   AND u.purchase_date BETWEEN p.start_date AND p.end_date                                             -- Ensures the units sold fall within the valid price date range
+GROUP BY p.product_id;                                                                                 -- Groups results by product ID for aggregation
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips!
+1-Purpose:
+This query calculates the average price per product based on units sold during valid price periods, handling cases where no units were sold.
+
+2-Handling NULL Values with IFNULL:
+If no matching records are found in the unitssold table (e.g., no units sold for a product), the IFNULL function ensures the average price is set to 0 instead of NULL.
+
+3-Why Use LEFT JOIN?🤷‍♀️
+Ensures all products in the prices table are included in the result, even if there are no sales records in the unitssold table.
+
+4-Date Range Filter:
+The BETWEEN p.start_date AND p.end_date condition ensures that only units sold during the valid price period are included in the calculation.
+
+5-Aggregation and Rounding:
+SUM(p.price * u.units) / SUM(u.units): Calculates the weighted average price per product based on units sold.
+ROUND(..., 2): Rounds the result to two decimal places for better readability.
+
+6-GROUP BY:
+Groups by p.product_id to compute the average price for each product individually.
+
+7-Real-World Use Case:
+This query is useful for analyzing product pricing trends, such as determining the effective price customers paid during a specific period.
+
+👌 Key Takeaways:
+
+🎇Data Integration:
+Combines data from two tables (prices and unitssold) to calculate weighted averages.
+
+🎇NULL Handling:
+Demonstrates the importance of handling missing data using IFNULL.
+
+🎇Scalability:
+This pattern can be adapted for other weighted average calculations, such as revenue per unit or cost per item.
+
+🎇SQL Best Practices:
+Filters and conditions (e.g., BETWEEN) ensure only relevant data is included in the analysis.
+Aggregations (SUM) and rounding improve clarity and precision.
+*************************************************************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

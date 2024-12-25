@@ -83,7 +83,7 @@ Output:
 | 1          | 6.96          |
 | 2          | 16.96         |
 +------------+---------------+
-
+---------------------------------------------------------------------------------------------------------------------------------------------------------
 Solution:
 
 -- Selects the product ID from the Prices table
@@ -135,20 +135,176 @@ This pattern can be adapted for other weighted average calculations, such as rev
 Filters and conditions (e.g., BETWEEN) ensure only relevant data is included in the analysis.
 Aggregations (SUM) and rounding improve clarity and precision.
 *************************************************************************************************************************************************************************************
+Q3: Project employees I:
 
+Write an SQL query that reports the average experience years of all the employees for each project, rounded to 2 digits.
+Return the result table in any order.
 
+Example 1:
 
+Input: 
+Project table:
++-------------+-------------+
+| project_id  | employee_id |
++-------------+-------------+
+| 1           | 1           |
+| 1           | 2           |
+| 1           | 3           |
+| 2           | 1           |
+| 2           | 4           |
++-------------+-------------+
+Employee table:
++-------------+--------+------------------+
+| employee_id | name   | experience_years |
++-------------+--------+------------------+
+| 1           | Khaled | 3                |
+| 2           | Ali    | 2                |
+| 3           | John   | 1                |
+| 4           | Doe    | 2                |
++-------------+--------+------------------+
+Output: 
++-------------+---------------+
+| project_id  | average_years |
++-------------+---------------+
+| 1           | 2.00          |
+| 2           | 2.50          |
++-------------+---------------+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution:
 
+SELECT p.project_id, ROUND(AVG(e.experience_years), 2) AS average_years             -- Calculates the average experience years for each project, rounded to 2 decimal places                             
+       
+FROM project p                                                                      -- Project table containing project and employee mappings
+JOIN employee e                                                                     -- Employee table containing employee details, including experience years
+ON p.employee_id = e.employee_id                                                    -- Joins Project and Employee tables based on employee_id
+GROUP BY p.project_id;                                                              -- Groups the result by project ID to calculate the average for each project
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips!
 
+1-JOIN:
+Combines the Project table with the Employee table using the employee_id column, allowing access to employee experience years for each project.
 
+2-AVG:
+Calculates the average of experience_years for all employees associated with each project.
 
+3-ROUND:
+Rounds the calculated average to 2 decimal places for better readability and compliance with the output format.
 
+4-GROUP BY:
+Groups the data by project_id, ensuring that the average is calculated for each project separately.
 
+👌 Key Takeaways:
 
+🎇Purpose:
+The query calculates the average experience years of all employees for each project, ensuring accurate and formatted results.
 
+🎇Why Use JOIN?
+Combines project and employee data, making it possible to calculate experience years for each project based on employee participation.
 
+🎇Aggregation with AVG:
+The AVG function is perfect for scenarios requiring average calculations over grouped data.
 
+🎇Rounding with ROUND:
+Ensures consistency in output formatting (e.g., 2 decimal places), improving presentation and usability.
 
+🎇GROUP BY for Aggregation:
+Ensures the calculation of averages for each unique project (project_id).
+
+🎇Performance Considerations:
+Use appropriate indexing (e.g., on employee_id and project_id) to optimize performance, especially for large datasets.
+*************************************************************************************************************************************************************************************
+Q4: Percentage of users attended a contest:
+
+Write a solution to find the percentage of the users registered in each contest rounded to two decimals.
+Return the result table ordered by percentage in descending order. 
+In case of a tie, order it by contest_id in ascending order.
+
+Example 1:
+
+Input: 
+Users table:
++---------+-----------+
+| user_id | user_name |
++---------+-----------+
+| 6       | Alice     |
+| 2       | Bob       |
+| 7       | Alex      |
++---------+-----------+
+Register table:
++------------+---------+
+| contest_id | user_id |
++------------+---------+
+| 215        | 6       |
+| 209        | 2       |
+| 208        | 2       |
+| 210        | 6       |
+| 208        | 6       |
+| 209        | 7       |
+| 209        | 6       |
+| 215        | 7       |
+| 208        | 7       |
+| 210        | 2       |
+| 207        | 2       |
+| 210        | 7       |
++------------+---------+
+Output: 
++------------+------------+
+| contest_id | percentage |
++------------+------------+
+| 208        | 100.0      |
+| 209        | 100.0      |
+| 210        | 100.0      |
+| 215        | 66.67      |
+| 207        | 33.33      |
++------------+------------+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution:
+
+SELECT r.contest_id,                                      
+       ROUND(COUNT(DISTINCT r.user_id) * 100.0 /           -- Calculates the percentage of registered users
+             (SELECT COUNT(DISTINCT u.user_id)             -- Total number of unique users from the Users table
+              FROM users u), 2) AS percentage              -- Rounds the percentage to two decimal places
+FROM register r                                            -- Register table containing contest-user mappings
+GROUP BY r.contest_id                                      -- Groups results by contest ID for aggregation
+ORDER BY percentage DESC,                                  -- Orders by percentage in descending order
+         r.contest_id ASC;                                 -- Orders by contest ID in ascending order in case of a tie
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips!
+
+1-Purpose:
+Calculate the percentage of total users who registered for each contest.
+
+2-Key Steps:
+   a.Count Registered Users:
+    COUNT(DISTINCT r.user_id) counts unique users registered for each contest.
+   b.Total Users:
+    (SELECT COUNT(DISTINCT u.user_id) FROM users u) calculates the total number of distinct users from the Users table.
+   c.Percentage:
+    Multiplies the count of registered users by 100.0 and divides by the total users to compute the percentage.
+   d.Rounding:
+    ROUND(..., 2) ensures the result is rounded to two decimal places.
+3-GROUP BY:
+Groups the data by contest_id to compute the percentage for each contest.
+
+4-ORDER BY:
+Orders the result by:
+   a.percentage DESC: Descending order of percentage.
+   b.contest_id ASC: Ascending order of contest_id to resolve ties.
+
+👌 Key Takeaways:
+
+🎇Data Aggregation:
+Demonstrates the use of COUNT, DISTINCT, and GROUP BY for summarizing data.
+
+🎇Subquery Usage:
+Shows how to calculate a total value (total users) for percentage calculations.
+
+🎇Advanced Sorting:
+Includes multiple sorting criteria for ranked output.
+
+🎇SQL Best Practices:
+Uses ROUND for consistent formatting and ensures no duplicate counts with DISTINCT.
+*************************************************************************************************************************************************************************************
 
 
 

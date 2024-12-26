@@ -305,6 +305,212 @@ Includes multiple sorting criteria for ranked output.
 🎇SQL Best Practices:
 Uses ROUND for consistent formatting and ensures no duplicate counts with DISTINCT.
 *************************************************************************************************************************************************************************************
+Q5: Queries quality and percentage:
+
+Write a solution to find each query_name, the quality and poor_query_percentage.
+Both quality and poor_query_percentage should be rounded to 2 decimal places.
+Return the result table in any order.
+
+Example 1:
+
+Input: 
+Queries table:
++------------+-------------------+----------+--------+
+| query_name | result            | position | rating |
++------------+-------------------+----------+--------+
+| Dog        | Golden Retriever  | 1        | 5      |
+| Dog        | German Shepherd   | 2        | 5      |
+| Dog        | Mule              | 200      | 1      |
+| Cat        | Shirazi           | 5        | 2      |
+| Cat        | Siamese           | 3        | 3      |
+| Cat        | Sphynx            | 7        | 4      |
++------------+-------------------+----------+--------+
+Output: 
++------------+---------+-----------------------+
+| query_name | quality | poor_query_percentage |
++------------+---------+-----------------------+
+| Dog        | 2.50    | 33.33                 |
+| Cat        | 0.66    | 33.33                 |
++------------+---------+-----------------------+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution:
+SELECT 
+    query_name,
+    ROUND(SUM(rating * 1.0 / position) / COUNT(*), 2) AS quality,                                                -- Calculates the average quality
+    ROUND(SUM(CASE WHEN rating < 3 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS poor_query_percentage            -- Calculates poor query percentage
+FROM 
+    Queries
+GROUP BY 
+    query_name;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips!
+
+1-Purpose:
+Calculates the quality of a query.
+-The ratio of rating / position is computed for each row, summed up, and then averaged.
+
+Why 1.0 / position?:🤷‍♀️
+-Multiplying by 1.0 ensures floating-point division for accurate calculations.
+-ROUND(SUM(CASE WHEN rating < 3 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2):
+
+2-Purpose:
+Calculates the poor query percentage.
+-Counts rows where the rating < 3 (poor queries) and divides by the total number of rows for the query.
+-Multiplies by 100 to get the percentage.
+
+Why Use CASE?:🤷‍♀️
+-Enables conditional aggregation, counting only rows that satisfy the condition (rating < 3).
+
+3-GROUP BY query_name:
+Ensures metrics are calculated separately for each unique query_name.
+
+4-Rounding with ROUND(..., 2):
+Ensures the output matches the required format (two decimal places), making results user-friendly and consistent.
+
+5-Real-World Use Case:
+Useful for analyzing the performance of queries in a database or search system:
+
+6-Quality: Evaluates the efficiency of query results based on ratings and relevance (position).
+Poor Query Percentage: Helps identify queries needing improvement.
+
+
+👌 Key Takeaways:
+
+🎇Conditional Aggregation:
+Demonstrates how to calculate metrics conditionally using CASE.
+
+🎇Mathematical Precision:
+Ensures calculations are precise by converting integers to floating-point numbers where necessary.
+
+🎇Practical Application:
+Highlights a use case in database or search query analysis, making it relatable and applicable.
+
+🎇Best Practices:
+Includes ROUND for formatting consistency.
+Uses clear aliases (quality, poor_query_percentage) for better readability.
+
+🎇Scalable Design:
+Works well with small and large datasets, provided proper indexing is in place.
+*************************************************************************************************************************************************************************************
+Q6: Monthly transactions:
+
+Write an SQL query to find for each month and country, the number of transactions and their total amount, the number of approved transactions and their total amount.
+Return the result table in any order.
+
+Example 1:
+
+Input: 
+Transactions table:
++------+---------+----------+--------+------------+
+| id   | country | state    | amount | trans_date |
++------+---------+----------+--------+------------+
+| 121  | US      | approved | 1000   | 2018-12-18 |
+| 122  | US      | declined | 2000   | 2018-12-19 |
+| 123  | US      | approved | 2000   | 2019-01-01 |
+| 124  | DE      | approved | 2000   | 2019-01-07 |
++------+---------+----------+--------+------------+
+Output: 
++----------+---------+-------------+----------------+--------------------+-----------------------+
+| month    | country | trans_count | approved_count | trans_total_amount | approved_total_amount |
++----------+---------+-------------+----------------+--------------------+-----------------------+
+| 2018-12  | US      | 2           | 1              | 3000               | 1000                  |
+| 2019-01  | US      | 1           | 1              | 2000               | 2000                  |
+| 2019-01  | DE      | 1           | 1              | 2000               | 2000                  |
++----------+---------+-------------+----------------+--------------------+-----------------------+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution: 
+
+SELECT 
+    DATE_FORMAT(trans_date, '%Y-%m') AS month,                
+    country,                                                  
+    COUNT(*) AS trans_count,                                                               -- Counts the total number of transactions
+    SUM(CASE WHEN state = 'approved' THEN 1 ELSE 0 END) AS approved_count,                 -- Counts the number of approved transactions
+    SUM(amount) AS trans_total_amount,                                                     -- Sums the total transaction amount
+    SUM(CASE WHEN state = 'approved' THEN amount ELSE 0 END) AS approved_total_amount      -- Sums the total amount of approved transactions
+
+FROM 
+    Transactions                                                                           -- Source table containing transaction data
+GROUP BY 
+    DATE_FORMAT(trans_date, '%Y-%m'), country                                              -- Groups by month and country
+ORDER BY 
+    month, country;   
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips!
+
+1-DATE_FORMAT(trans_date, '%Y-%m'):
+Extracts the year and month from the trans_date column in the format YYYY-MM.
+
+2-COUNT(*):
+Counts all rows in the group, representing the total number of transactions for each month and country.
+
+3-SUM(CASE WHEN state = 'approved' THEN 1 ELSE 0 END):
+Conditionally counts only the approved transactions.
+
+4-SUM(amount):
+Sums the amount column to calculate the total transaction amount.
+
+5-SUM(CASE WHEN state = 'approved' THEN amount ELSE 0 END):
+Sums the transaction amounts where the state is 'approved'.
+
+6-GROUP BY:
+Groups the rows by the extracted month and country to calculate metrics for each combination.
+
+7-ORDER BY:
+Sorts the results by month and country for readability.
+
+👌Key Takeaways:
+
+🎇Date Aggregation:
+DATE_FORMAT(trans_date, '%Y-%m') efficiently extracts the month and year, enabling grouping by time periods.
+
+🎇Conditional Aggregation:
+CASE WHEN ... THEN ... ELSE ... END allows for selective counting or summing based on conditions, e.g., counting only approved transactions.
+
+🎇Summarization:
+Using COUNT(*) and SUM() in combination with GROUP BY helps summarize data for multiple metrics in a single query.
+
+🎇Dynamic Metrics:
+The query calculates multiple metrics (transaction count, total amount, approved count, approved total amount) simultaneously for each group (month and country).
+
+🎇Scalability:
+This query design works efficiently for large datasets, provided proper indexing on trans_date and country.
+
+🎇Real-World Application:
+Useful in financial or sales reporting to track transaction metrics over time and across regions.
+
+🎇Clarity and Readability:
+Using descriptive column aliases (trans_count, approved_total_amount) makes the result table self-explanatory.
+*************************************************************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

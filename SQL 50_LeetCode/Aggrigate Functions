@@ -482,6 +482,184 @@ Useful in financial or sales reporting to track transaction metrics over time an
 🎇Clarity and Readability:
 Using descriptive column aliases (trans_count, approved_total_amount) makes the result table self-explanatory.
 *************************************************************************************************************************************************************************************
+Q7: Immediate food delivery:
+
+Write a solution to find the percentage of immediate orders in the first orders of all customers, rounded to 2 decimal places.
+
+
+Input: 
+Delivery table:
++-------------+-------------+------------+-----------------------------+
+| delivery_id | customer_id | order_date | customer_pref_delivery_date |
++-------------+-------------+------------+-----------------------------+
+| 1           | 1           | 2019-08-01 | 2019-08-02                  |
+| 2           | 2           | 2019-08-02 | 2019-08-02                  |
+| 3           | 1           | 2019-08-11 | 2019-08-12                  |
+| 4           | 3           | 2019-08-24 | 2019-08-24                  |
+| 5           | 3           | 2019-08-21 | 2019-08-22                  |
+| 6           | 2           | 2019-08-11 | 2019-08-13                  |
+| 7           | 4           | 2019-08-09 | 2019-08-09                  |
++-------------+-------------+------------+-----------------------------+
+Output: 
++----------------------+
+| immediate_percentage |
++----------------------+
+| 50.00                |
++----------------------+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution: 
+
+WITH FirstOrders AS (                                               
+    SELECT customer_id, MIN(order_date) AS first_order_date                                     -- Finds the earliest order date for each customer                     
+    FROM Delivery
+    GROUP BY customer_id),                                                                      -- Groups the results by customer
+
+ImmediateOrders AS (SELECT f.customer_id,d.order_date,d.customer_pref_delivery_date             -- Selects the customer ID from FirstOrders
+    FROM FirstOrders f                                                                          
+    JOIN Delivery d                                                                             -- Joins to get full details of the first order
+    ON f.customer_id = d.customer_id AND f.first_order_date = d.order_date                      -- Matches on customer ID
+    WHERE d.order_date = d.customer_pref_delivery_date)                                         -- Filters for immediate orders (order date matches delivery date)
+
+SELECT                                                                                          -- Calculates the percentage of immediate first orders, rounded to 2 decimal places
+    ROUND(COUNT(DISTINCT ImmediateOrders.customer_id) * 100.0 / COUNT(DISTINCT FirstOrders.customer_id), 2) AS immediate_percentage
+FROM FirstOrders                                                                                -- Base CTE with all customers and their first orders
+LEFT JOIN ImmediateOrders                                                                       -- Left join to include all customers, even if they don't have immediate orders
+ON FirstOrders.customer_id = ImmediateOrders.customer_id;                                       -- Joins to include immediate order details
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips!
+
+1-FirstOrders CTE:
+          -Purpose: Extract the first order date for each customer using MIN(order_date).
+          -Tip: Use GROUP BY to group data by customer_id for individual customer calculations.
+
+2-ImmediateOrders CTE:
+          -Purpose: Identifies customers whose first orders are immediate (i.e., order_date equals customer_pref_delivery_date).
+          -Tip: Using a JOIN with conditions ensures that only relevant rows are retained for immediate orders.
+
+3-Main Query:
+          -Percentage Calculation:
+          -Numerator: Counts customers with immediate first orders using COUNT(DISTINCT ImmediateOrders.customer_id).
+          -Denominator: Counts all customers using COUNT(DISTINCT FirstOrders.customer_id).
+          -Tip: Use ROUND to ensure results are formatted to two decimal places.
+4-Left Join:
+          -Ensures all customers from FirstOrders are included, even if they do not have immediate orders.
+
+5-Performance Optimization:
+          -Add indexes on customer_id and order_date in the Delivery table for faster grouping and filtering.
+
+6-Real-World Use Case:
+          -This query is helpful for businesses analyzing delivery performance metrics, such as how often customers' preferred delivery timelines are met on their first orders.
+
+👌Key Takeaways:
+
+🎇CTEs (Common Table Expressions):
+FirstOrders and ImmediateOrders make the query modular and easier to understand.
+
+🎇Conditional Aggregation:
+Using CASE in aggregation (e.g., COUNT) filters specific conditions dynamically.
+
+🎇Rounding for Precision:
+ROUND ensures the result is user-friendly and formatted appropriately.
+
+🎇Business Insight:
+This query demonstrates how to calculate customer delivery metrics, a common logistics and customer service analytics requirement.
+*************************************************************************************************************************************************************************************
+Q8:Game play analysis IV:
+
+Write a solution to report the fraction of players that logged in again on the day after the day they first logged in, 
+rounded to 2 decimal places. 
+In other words, you need to count the number of players that logged in for at least two consecutive days starting from their first login date, 
+then divide that number by the total number of players.
+
+Input: 
+Activity table:
++-----------+-----------+------------+--------------+
+| player_id | device_id | event_date | games_played |
++-----------+-----------+------------+--------------+
+| 1         | 2         | 2016-03-01 | 5            |
+| 1         | 2         | 2016-03-02 | 6            |
+| 2         | 3         | 2017-06-25 | 1            |
+| 3         | 1         | 2016-03-02 | 0            |
+| 3         | 4         | 2018-07-03 | 5            |
++-----------+-----------+------------+--------------+
+Output: 
++-----------+
+| fraction  |
++-----------+
+| 0.33      |
++-----------+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Solution: 
+
+WITH FirstLogin AS (
+    SELECT player_id, MIN(event_date) AS first_login_date
+    FROM Activity
+    GROUP BY player_id),
+
+NextDayLogin AS (
+    SELECT f.player_id,f.first_login_date,a.event_date
+    FROM FirstLogin f
+    JOIN Activity a
+    ON  f.player_id = a.player_id AND a.event_date = DATE_ADD(f.first_login_date, INTERVAL 1 DAY)),
+
+Fraction AS (SELECT 
+                      COUNT(DISTINCT n.player_id) AS next_day_players,
+                      COUNT(DISTINCT f.player_id) AS total_players
+    FROM FirstLogin f
+    LEFT JOIN NextDayLogin n
+    ON f.player_id = n.player_id)
+
+SELECT ROUND(next_day_players * 1.0 / total_players, 2) AS fraction
+FROM Fraction;
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips!
+
+1-Use CTEs for Modularity:
+Breaking the query into logical parts (FirstLogin, NextDayLogin, and Fraction) makes it easier to read, debug, and maintain.
+
+2-MIN for First Event:
+MIN(event_date) is ideal for finding the earliest event, such as the first login.
+
+3-Date Comparison:
+Use DATE_ADD or equivalent functions to calculate "next day" logic.
+
+4-Distinct Counts:
+COUNT(DISTINCT ...) ensures unique players are counted for both total players and those logging in the next day.
+
+5-Left Join for Completeness:
+Using a LEFT JOIN ensures all players are included, even if they didn't log in the next day.
+
+6-Rounding:
+ROUND(..., 2) is essential for formatting the result to two decimal places, as specified in the requirements.
+
+👌Key Takeaways:
+
+🎇Behavioral Analysis:
+The query analyzes player behavior, specifically the likelihood of logging in on consecutive days starting from the first login.
+
+🎇Performance Considerations:
+Indexing player_id and event_date in the Activity table can significantly improve performance, especially with large datasets.
+
+🎇Real-World Application:
+Useful for analyzing player retention and engagement in gaming or application analytics.
+
+🎇Dynamic Calculations:
+Shows how SQL can handle temporal relationships (e.g., comparing dates) dynamically.
+
+🎇Practical Use of SQL Constructs:
+Demonstrates efficient use of aggregation, joins, and conditional logic.
+*************************************************************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
 
 
 

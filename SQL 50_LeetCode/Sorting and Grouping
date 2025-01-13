@@ -1,1 +1,115 @@
+Q1:Number of unique subjects taught by each teacher:
+
+Write a solution to calculate the number of unique subjects each teacher teaches in the university.
+Return the result table in any order.
+
+Input: 
+Teacher table:
++------------+------------+---------+
+| teacher_id | subject_id | dept_id |
++------------+------------+---------+
+| 1          | 2          | 3       |
+| 1          | 2          | 4       |
+| 1          | 3          | 3       |
+| 2          | 1          | 1       |
+| 2          | 2          | 1       |
+| 2          | 3          | 1       |
+| 2          | 4          | 1       |
++------------+------------+---------+
+Output:  
++------------+-----+
+| teacher_id | cnt |
++------------+-----+
+| 1          | 2   |
+| 2          | 4   |
++------------+-----+
+------------------------------------------------------------------------------------------------------------------------------------------
+Solution:
+
+SELECT teacher_id ,COUNT(DISTINCT subject_id) AS cnt                                 -- Count unique subjects taught by the teacher
+FROM teacher
+GROUP BY teacher_id;                                                                 -- Group data by teacher to get counts per teacher
+------------------------------------------------------------------------------------------------------------------------------------------
+🎯 Tips:
+
+1-COUNT(DISTINCT subject_id):
+Ensures that each subject is counted only once for each teacher, even if it appears in different departments (dept_id).
+
+2-GROUP BY teacher_id:
+Groups the data by teacher_id to calculate the unique subject count for each teacher.
+
+3-Result:
+Produces a table where each row contains a teacher_id and the count of unique subjects (cnt) they teach.
+*********************************************************************************************************************************************************************
+Q2: User activity for the past 30 days I:
+
+Write a solution to find the daily active user count for a period of 30 days ending 2019-07-27 inclusively. 
+A user was active on someday if they made at least one activity on that day.
+Return the result table in any order.
+
+Input: 
+Activity table:
++---------+------------+---------------+---------------+
+| user_id | session_id | activity_date | activity_type |
++---------+------------+---------------+---------------+
+| 1       | 1          | 2019-07-20    | open_session  |
+| 1       | 1          | 2019-07-20    | scroll_down   |
+| 1       | 1          | 2019-07-20    | end_session   |
+| 2       | 4          | 2019-07-20    | open_session  |
+| 2       | 4          | 2019-07-21    | send_message  |
+| 2       | 4          | 2019-07-21    | end_session   |
+| 3       | 2          | 2019-07-21    | open_session  |
+| 3       | 2          | 2019-07-21    | send_message  |
+| 3       | 2          | 2019-07-21    | end_session   |
+| 4       | 3          | 2019-06-25    | open_session  |
+| 4       | 3          | 2019-06-25    | end_session   |
++---------+------------+---------------+---------------+
+Output: 
++------------+--------------+ 
+| day        | active_users |
++------------+--------------+ 
+| 2019-07-20 | 2            |
+| 2019-07-21 | 2            |
++------------+--------------+ 
+------------------------------------------------------------------------------------------------------------------------------------------
+Solution:
+SELECT activity_date AS day,
+       COUNT(DISTINCT user_id) AS active_users               -- Count unique users who were active on that day
+FROM activity
+WHERE activity_date BETWEEN '2019-06-28' AND '2019-07-27'    -- 30-day period ending on 2019-07-27
+GROUP BY activity_date;                                      -- Group by each day to calculate the active user count
+------------------------------------------------------------------------------------------------------------------------------------------
+🎯 Tips:
+
+1-Filter the Date Range:
+Use WHERE activity_date BETWEEN '2019-06-28' AND '2019-07-27' to include only activities within the last 30 days.
+
+2-Count Distinct Users:
+Use COUNT(DISTINCT user_id) to ensure each user is counted only once per day.
+
+3-Group by Activity Date:
+Group the results by activity_date to get the daily count.
+------------------------------------------------------------------------------------------------------------------------------------------
+👌Key Takeaways:
+
+Why Only Group by activity_date?🤷‍♀️
+
+🎇Purpose:
+The query is designed to calculate daily active users, meaning we need a single count of unique user_ids for each activity_date.
+GROUP BY activity_date ensures the result is aggregated by each day.
+
+🎇Impact of Grouping by user_id:
+If you add user_id to the GROUP BY clause, the query would calculate data per user per day instead of a single count for each day.
+This would break the COUNT(DISTINCT user_id) logic because each row in the result would represent a unique user for a specific date.
+*********************************************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
 

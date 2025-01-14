@@ -1,1 +1,21 @@
+# Google Sheets Dashboard - Sales and Profit Analysis
+
+This project contains an interactive Google Sheets dashboard that visualizes sales and profit data for four major Canadian cities (Montreal, Ottawa, Toronto, and Vancouver) in 2015. The dashboard displays key metrics like sales by city, product profit, and sales trends over time.
+
+## Key Features:
+- Interactive city and product filtering.
+- Sales and profit trend analysis.
+- Breakdown of sales distribution by product category (Tech, Office, Furniture).
+- Geographical visualization of city profits.
+
+## How to View:
+- You can view the interactive dashboard by accessing the link below:
+ https://docs.google.com/spreadsheets/d/1GtZnuLCethsoerSk7w0DexEuukjANkT8H6qUeh5FVEY/edit?usp=sharing
+
+## How to Use:
+- Use the dropdown menus to filter by city, product, or sub-product.
+- The charts and graphs will update dynamically based on your selection.
+
+## File Information:
+- The file is in **Google Sheets** 
 

@@ -102,6 +102,127 @@ GROUP BY activity_date ensures the result is aggregated by each day.
 If you add user_id to the GROUP BY clause, the query would calculate data per user per day instead of a single count for each day.
 This would break the COUNT(DISTINCT user_id) logic because each row in the result would represent a unique user for a specific date.
 *********************************************************************************************************************************************************************
+Q3:Product sales analysis III:
+
+Write a solution to select the product id, year, quantity, and price for the first year of every product sold.
+Return the resulting table in any order.
+
+Input: 
+Sales table:
++---------+------------+------+----------+-------+
+| sale_id | product_id | year | quantity | price |
++---------+------------+------+----------+-------+ 
+| 1       | 100        | 2008 | 10       | 5000  |
+| 2       | 100        | 2009 | 12       | 5000  |
+| 7       | 200        | 2011 | 15       | 9000  |
++---------+------------+------+----------+-------+
+Product table:
++------------+--------------+
+| product_id | product_name |
++------------+--------------+
+| 100        | Nokia        |
+| 200        | Apple        |
+| 300        | Samsung      |
++------------+--------------+
+Output: 
++------------+------------+----------+-------+
+| product_id | first_year | quantity | price |
++------------+------------+----------+-------+ 
+| 100        | 2008       | 10       | 5000  |
+| 200        | 2011       | 15       | 9000  |
++------------+------------+----------+-------+
+------------------------------------------------------------------------------------------------------------------------------------------
+✨Solution 1: Using Join
+
+SELECT s.product_id, 
+       s.year AS first_year, 
+       s.quantity, 
+       s.price
+FROM Sales s
+JOIN (
+    SELECT product_id, MIN(year) AS first_year
+    FROM Sales
+    GROUP BY product_id
+) AS first_sales
+ON s.product_id = first_sales.product_id
+AND s.year = first_sales.first_year;
+
+👌Explanation:
+
+1-Subquery (first_sales): The subquery selects the minimum year for each product_id and aliases it as first_year.
+
+2-JOIN: The main query then joins the Sales table with the result of the subquery using product_id and year to ensure that 
+we get the quantity and price corresponding to the first sale year for each product.
+
+3-GROUP BY: The subquery uses GROUP BY product_id to group the data by product_id and find the earliest year for each product.
+------------------------------------------------------------------------------------------------------------------------------------------
+✨Solution 2: Using CTE
+
+WITH FirstSales AS (
+    SELECT product_id, MIN(year) AS first_year
+    FROM Sales
+    GROUP BY product_id)
+SELECT s.product_id, 
+       s.year AS first_year, 
+       s.quantity, 
+       s.price
+FROM Sales s
+JOIN FirstSales fs
+ON s.product_id = fs.product_id
+AND s.year = fs.first_year;
+
+👌Explanation:
+
+1-CTE (FirstSales): The WITH clause defines the CTE, which selects the product_id and the MIN(year) as first_year for each product_id. 
+This CTE is like a temporary result set.
+
+2-JOIN: The main query then joins the Sales table with the CTE (FirstSales) based on product_id and year, 
+ensuring that we get the correct quantity and price for the first sale year of each product.
+*********************************************************************************************************************************************************************
+Q4: Classes more than 5 students:
+
+Write a solution to find all the classes that have at least five students.
+Return the result table in any order.
+
+Input: 
+Courses table:
++---------+----------+
+| student | class    |
++---------+----------+
+| A       | Math     |
+| B       | English  |
+| C       | Math     |
+| D       | Biology  |
+| E       | Math     |
+| F       | Computer |
+| G       | Math     |
+| H       | Math     |
+| I       | Math     |
++---------+----------+
+Output: 
++---------+
+| class   |
++---------+
+| Math    |
++---------+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+Solution :
+
+SELECT class
+FROM Courses
+GROUP BY class
+HAVING COUNT(student) >= 5;
+------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips:
+
+1-GROUP BY class: Group the records by the class column so that each class will have its own group.
+
+2-HAVING COUNT(student) >= 5: The HAVING clause filters the results to include only those classes where the number of students (count of student) is greater than or equal to 5.
+
+*********************************************************************************************************************************************************************
+
+
 
 
 

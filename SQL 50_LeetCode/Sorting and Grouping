@@ -221,6 +221,153 @@ HAVING COUNT(student) >= 5;
 2-HAVING COUNT(student) >= 5: The HAVING clause filters the results to include only those classes where the number of students (count of student) is greater than or equal to 5.
 
 *********************************************************************************************************************************************************************
+Q5:Find followers count
+
+Write a solution that will, for each user, return the number of followers.
+Return the result table ordered by user_id in ascending order.
+
+Input: 
+Followers table:
++---------+-------------+
+| user_id | follower_id |
++---------+-------------+
+| 0       | 1           |
+| 1       | 0           |
+| 2       | 0           |
+| 2       | 1           |
++---------+-------------+
+Output: 
++---------+----------------+
+| user_id | followers_count|
++---------+----------------+
+| 0       | 1              |
+| 1       | 1              |
+| 2       | 2              |
++---------+----------------+
+------------------------------------------------------------------------------------------------------------------------------------------
+Solution :
+
+SELECT  user_id, COUNT(*) AS followers_count  --COUNT(*) counts the number of rows (followers) associated with each user_id.
+FROM Followers
+GROUP BY user_id                              --GROUP BY user_id ensures we aggregate the follower counts per user.
+ORDER BY user_id;                             --ORDER BY user_id sorts the results in ascending order by user_id.
+
+------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips:
+
+1-Use Consistent Naming Conventions
+
+2-Make sure column aliases and table names are clear, so you and other developers can understand the purpose of each field at a glance.
+
+3-Check for Null or Duplicate Entries
+✨If your data might include duplicates or null values, you may need to use COUNT(DISTINCT follower_id) or filter out nulls in certain cases.
+
+4-Optimize for Large Tables
+✨If your Followers table becomes very large, consider indexing columns used in JOINs or where clauses to improve query performance.
+
+5-Understand the Data Model
+✨Verify that user_id and follower_id columns accurately represent your users, and ensure that user_id is the user being followed, while follower_id is the user who follows.
+------------------------------------------------------------------------------------------------------------------------------------------
+👌Key Takeaways:
+
+🎇Aggregation with COUNT()
+To find the total number of followers for each user, use an aggregate function like COUNT(*). It counts the rows grouped by user_id.
+
+🎇Grouping
+Applying GROUP BY user_id ensures all followers for the same user are aggregated together.
+
+🎇Sorting the Results
+Using ORDER BY user_id returns the result in ascending order based on user_id.
+
+🎇Simple Structure
+A straightforward query that selects user_id and the aggregated COUNT(*) is efficient and easy to read.
+
+🎇Meaningful Aliases
+Aliasing the count column as followers_count (or a descriptive name of your choice) makes the result clearer.
+*********************************************************************************************************************************************************************
+Q6: Biggest single number:
+
+A single number is a number that appeared only once in the MyNumbers table.
+Find the largest single number. If there is no single number, report null.
+
+Input: 
+MyNumbers table:
++-----+
+| num |
++-----+
+| 8   |
+| 8   |
+| 3   |
+| 3   |
+| 1   |
+| 4   |
+| 5   |
+| 6   |
++-----+
+Output: 
++-----+
+| num |
++-----+
+| 6   |
++-----+
+Input: 
+MyNumbers table:
++-----+
+| num |
++-----+
+| 8   |
+| 8   |
+| 7   |
+| 7   |
+| 3   |
+| 3   |
+| 3   |
++-----+
+Output: 
++------+
+| num  |
++------+
+| null |
++------+
+------------------------------------------------------------------------------------------------------------------------------------------
+Solution 1:
+
+SELECT     
+    MAX(num) AS num                     -- From a subquery that isolates numbers which appear exactly once
+FROM (                                  -- This subquery fetches numbers that appear only once
+    SELECT num                          -- Choose the source table                
+    FROM MyNumbers    
+    GROUP BY num                        -- Group by the number to aggregate counts 
+    HAVING COUNT(*) = 1                 -- Keep only numbers that appear exactly once
+) AS singles;
+------------------------------------------------------------------------------------------------------------------------------------------
+Solution 2: CTE Table
+
+-- Define a CTE called 'singles'       -- Select the number from MyNumbers
+WITH singles AS (                    
+    SELECT  num
+    FROM MyNumbers
+    GROUP BY num                       -- Group by num to aggregate counts
+    HAVING COUNT(*) = 1 )              -- Keep only numbers that appear exactly once
+
+SELECT     MAX(num) AS num             -- Now select the maximum from the CTE    
+FROM singles;
+------------------------------------------------------------------------------------------------------------------------------------------
+🎯Tips:
+
+1-Subquery (singles):
+Groups the numbers in MyNumbers by num.
+Uses HAVING COUNT(*) = 1 to retain only those that appear once.
+
+2-Outer Query:
+Selects the maximum (MAX(num)) of these single-occurrence numbers.
+If no rows are returned from the subquery (i.e., no single-occurrence numbers), MAX() on an empty set will return NULL.
+*********************************************************************************************************************************************************************
+
+
+
+
+
 
 
 

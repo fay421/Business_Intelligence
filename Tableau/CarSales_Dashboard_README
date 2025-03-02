@@ -1,1 +1,76 @@
+# 🚗 Car Sales Dashboard
+
+## 📌 Overview
+This **Car Sales Dashboard** is an **interactive visualization** created in **Tableau** to analyze **car sales performance** over different **dealers, regions, body styles, colors, and transmission types**. The dashboard provides key **insights** such as **Year-to-Date (YTD) sales**, **weekly trends**, and **company-wise performance**.
+
+The dataset contains **car sales transaction records**, including details like **dealer name, company, model, engine type, transmission, price, and dealer region**.
+
+---
+
+## 📊 Features & Insights
+### ✅ **1. Key Metrics Display**
+- **YTD Total Sales**: $371.19M with **YoY Growth of 23.59%**
+- **YTD Average Price**: $27.99K with a slight **YoY decline (-0.79%)**
+- **Total Cars Sold**: **13.26K units**, growing **24.57% YoY**
+
+### ✅ **2. Sales Trends & Distribution**
+- **📈 YTD Weekly Sales Trend**: A **time-series line chart** showing **weekly sales volume**.
+- **🥇 YTD Total Sales by Body Style**: A **pie chart** breaking down sales across different **car body styles**.
+- **🎨 YTD Sales by Color**: A **donut chart** displaying car sales based on **color preferences**.
+
+### ✅ **3. Dealer Performance**
+- **🏢 YTD Cars Sold by Dealer Region**: A **stacked bar chart** comparing **manual vs. auto transmission sales** across dealer locations.
+- **📌 Company-Wise Sales Trend**:
+  - **Top Car Brands** and their **YTD Sales & Market Share**.
+  - **Price comparison across different manufacturers**.
+
+### ✅ **4. Interactive Filters**
+- **Date Range Selection**: Filter sales between **January 2020 to December 2021**.
+- **Transmission Type**: Choose between **Auto & Manual**.
+- **Body Style, Engine, and Gender Filters**.
+
+---
+
+## 📂 Dataset Information
+The dataset contains the following fields:
+| Column Name        | Description                                     |
+|--------------------|-------------------------------------------------|
+| `Annual Income`    | Income range of customers purchasing cars      |
+| `Dealer_Name`      | Name of the dealership                         |
+| `Company`         | Car brand/manufacturer                          |
+| `Model`           | Car model name                                  |
+| `Engine`          | Engine type (e.g., Overhead Camshaft)           |
+| `Transmission`    | Type of transmission (Manual/Auto)              |
+| `Color`           | Car color                                       |
+| `Price ($)`       | Sale price of the car                          |
+| `Dealer_No`       | Dealer’s unique identifier                     |
+| `Body Style`      | Type of car (SUV, Sedan, Hatchback, etc.)       |
+| `Phone`           | Dealer contact number                          |
+| `Dealer_Region`   | Location of the dealership                     |
+
+---
+
+## 📷 Dashboard Preview
+![Car Sales Dashboard](Car_Sales_Dashboard.png)
+
+---
+
+## 🚀 How to Use
+1. **Download the Tableau Workbook (`.twb` or `.twbx`).**
+2. **Open in Tableau Desktop or Tableau Public.**
+3. **Explore the filters, hover over charts, and analyze sales trends.**
+4. **Customize it by adding more dimensions or modifying visualizations.**
+
+---
+
+## 📌 Future Improvements
+- Add **forecasting models** for future **car sales predictions**.
+- Introduce **profit analysis** by incorporating **cost data**.
+- Improve **dealer performance tracking** with **KPIs**.
+
+---
+
+## 🔗 Connect With Me
+If you have any questions, feel free to reach out or connect with me on **GitHub**!
+
 

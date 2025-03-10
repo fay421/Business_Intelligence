@@ -1,1 +1,123 @@
+# 🍕 Pizza Sales Dashboard
+
+## 📌 Overview
+This **Pizza Sales Dashboard** provides key insights into **pizza sales performance** using **SQL queries and Tableau visualizations**. The project aims to analyze **total revenue, order trends, and best/worst-selling pizzas** using an interactive dashboard.
+
+The dataset includes **pizza orders**, covering details like **order time, total price, pizza size, and category**. **SQL queries** were used to extract important KPIs, and **Tableau** was used to create a **visually appealing dashboard**.
+
+---
+
+## 🛠️ Features & Insights
+### ✅ **1. Key Performance Indicators (KPIs)**
+- **Total Revenue**: 💲817.9K  
+- **Average Order Value**: 💲38.31  
+- **Total Pizzas Sold**: **49.6K**  
+- **Total Orders**: **21.4K**  
+- **Average Pizzas per Order**: **2.32**  
+
+### ✅ **2. Sales Trends & Visualizations**
+- **📈 Hourly and Weekly Order Trends**: Identify peak sales hours and weekly performance.
+- **🍕 Sales Breakdown by Pizza Category & Size**:
+  - **Best-Selling Pizza Category**: **Classic**
+  - **Most Sold Pizza Size**: **Large**
+- **🏆 Best and Worst-Selling Pizzas**:
+  - **Top 5 Pizzas by Revenue & Total Sold**.
+  - **Bottom 5 Pizzas that performed the worst**.
+
+### ✅ **3. Interactive Dashboard**
+- **Filters**: Explore sales by **date, pizza category, and size**.
+- **Dynamic Charts**: View **sales breakdown, revenue trends, and order volumes**.
+
+---
+
+## 📂 Dataset Information
+The dataset consists of **pizza sales transactions** with the following columns:
+
+| Column Name       | Description                                     |
+|------------------|----------------------------------------------|
+| `Pizza_Id`      | Unique identifier for each pizza.            |
+| `Order_Id`      | Order number associated with the pizza.      |
+| `Pizza Name`    | Name of the pizza.                           |
+| `Quantity`      | Number of pizzas sold per order.             |
+| `Order Date`    | Date when the order was placed.              |
+| `Order Time`    | Time when the order was placed.              |
+| `Unit Price`    | Price per pizza unit.                        |
+| `Total Price`   | Total revenue for the pizza in an order.     |
+| `Pizza Size`    | Pizza size (Small, Medium, Large, etc.).     |
+| `Pizza Category`| Type of pizza (Veggie, Supreme, Classic).    |
+
+---
+
+## 🖥️ SQL Queries Used in This Project
+📌 **The SQL queries for calculating key metrics are available in the file:** `Pizza Sales_SQL_Queries.docx`.
+
+### ✅ **Examples of SQL Queries**
+- **Total Revenue**:
+  ```sql
+  SELECT SUM(total_price) AS Total_Revenue FROM pizza_sales;
+
+Average Order Value:
+SELECT SUM(total_price) / COUNT(DISTINCT order_id) AS Avg_Order_Value FROM pizza_sales;
+
+Top 5 Best-Selling Pizzas by Revenue:
+SELECT TOP 5 pizza_name, SUM(total_price) AS Total_Revenue 
+FROM pizza_sales 
+GROUP BY pizza_name 
+ORDER BY Total_Revenue DESC;
+
+📌 For a full list of queries, check the file: Pizza Sales_SQL_Queries.docx.
+
+📊 Tableau Dashboard
+📌 Dashboard Preview
+
+The dashboard provides visual insights into sales performance, including:
+
+Hourly and weekly trends.
+Sales distribution by pizza category and size.
+Best & worst-selling pizzas.
+📌 Additional screenshots included in the repository:
+
+Best and Worst Sellers.JPG
+Charts Statement1.JPG
+Charts Statement2.JPG
+Problem Statement.JPG
+🚀 How to Use This Project
+Download the SQL queries (Pizza Sales_SQL_Queries.docx).
+Run the queries in SQL Server to extract insights.
+Open the Tableau Workbook (.twb/.twbx).
+Explore the interactive dashboard and apply filters.
+Analyze sales trends to improve business decisions.
+📌 Future Improvements
+✅ Add more filtering options for regional sales analysis.
+✅ Incorporate machine learning models to predict sales trends.
+✅ Enhance data visualization with advanced analytics features.
+
+🔗 Connect With Me
+If you have any questions or feedback, feel free to connect with me on GitHub! 🚀😊
+
+✅ Next Steps for You:
+Upload this README.md to your GitHub repository.
+Add all related files (SQL queries, dashboard images, and Tableau workbook).
+Commit & push everything to GitHub.
+If you need any help with GitHub uploads, let me know! 🚀😊
+
+markdown
+Copy
+Edit
+
+---
+
+### ✅ **Final Steps for GitHub Upload**
+1️⃣ **Create a new GitHub repository**: `Pizza_Sales_Dashboard`.  
+2️⃣ **Upload all files**:
+   - `Pizza Sales_SQL_Queries.docx`
+   - `Home.JPG` (Dashboard Preview)
+   - `Best and Worst Sellers.JPG`
+   - `Charts Statement1.JPG`
+   - `Charts Statement2.JPG`
+   - `Problem Statement.JPG`
+3️⃣ **Add this README.md file**.  
+4️⃣ **Commit & Push**.  
+
+
 

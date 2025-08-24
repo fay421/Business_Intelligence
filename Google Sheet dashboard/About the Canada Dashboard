@@ -25,7 +25,8 @@ The dashboard was built in Google Sheets using various visualization tools, incl
 🎇City Sales Comparison: Bar charts to show the total sales across the four cities and track performance over time.
 🎇Profit Analysis: A section highlighting the products with the highest profit and showing any negative profit, especially in Montreal.
 🎇Sales Distribution: Pie charts to show the distribution of sales across different product categories like Technology, Office, and Furniture.
-🎇Geographical Visualization: A map showing the sales data for each city, with specific highlights for Montreal, where the profit is negative.
+🎇City-Level Profit Analysis: A horizontal bar chart displays total profit by city. Montreal stands out with a significant negative profit (–14,424 CAD), while Ottawa leads in profitability. 
+   The layout ensures high visibility of performance differences across regions.
 🎇Sales Timeline: A line chart showing the sales and profit over time to identify trends, peaks, and valleys.
 
 4. Interactive Dashboard:

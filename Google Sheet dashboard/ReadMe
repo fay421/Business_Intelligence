@@ -6,7 +6,7 @@ This project contains an interactive Google Sheets dashboard that visualizes sal
 - Interactive city and product filtering.
 - Sales and profit trend analysis.
 - Breakdown of sales distribution by product category (Tech, Office, Furniture).
-- Geographical visualization of city profits.
+- Profit by city (including a negative profit for Montreal)
 
 ## How to View:
 - You can view the interactive dashboard by accessing the link below:

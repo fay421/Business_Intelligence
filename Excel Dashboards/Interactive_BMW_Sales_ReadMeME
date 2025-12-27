@@ -1,1 +1,30 @@
+# Interactive BMW Sales Dashboard Across Global Continents
+
+This project presents an interactive Excel dashboard analyzing BMW sales performance across global continents from 2010 to 2024.
+
+## Overview
+The dashboard transforms raw sales data into clear business insights using KPIs, Pivot Tables, and interactive visuals. It is designed for executive-level analysis and strategic decision-making.
+
+## Key Features
+- Total revenue analysis across continents
+- Revenue breakdown by vehicle category (Sedan, SUV, Performance)
+- Revenue share (%) by continent
+- Identification of top and lowest revenue regions
+- Interactive world map visualization
+- Dynamic filtering using slicers
+
+## Tools & Techniques
+- Microsoft Excel
+- Data preprocessing and feature engineering
+- Pivot Tables and calculated fields
+- KPI design
+- Interactive dashboard design and storytelling
+
+## Key Insight
+BMW demonstrates strong global diversification, with Asia and the Middle East emerging as the top combined revenue region while maintaining balanced performance across all continents.
+
+## How to Use
+1. Download the Excel file
+2. Enable editing if prompted
+3. Use slicers to explore sales by model and region
 

@@ -1,1 +1,114 @@
+📊 Massachusetts Public Schools Performance Dashboard (Tableau)
+🧠 Project Overview
 
+This project analyzes public school performance across Massachusetts using data from the
+Massachusetts Department of Elementary and Secondary Education (DOE).
+
+The goal of this dashboard is to help stakeholders understand school system health, identify underperforming areas, and explore how academic outcomes relate to class size and student demographics.
+
+The dataset covers:
+
+1,861 schools
+
+953,748 students statewide
+
+🎯 Key Questions This Dashboard Answers
+
+Which schools have low high school graduation rates?
+
+Is there a relationship between class size and college attendance?
+
+How does 4th grade math performance vary across districts?
+
+Which districts are meeting performance thresholds, and which need more support?
+
+📈 Dashboard Components & Insights
+1️⃣ High School Graduation Rate (Left Panel)
+
+Displays schools with the lowest graduation rates
+
+Allows quick identification of schools most at risk
+
+Uses a horizontal bar chart for easy comparison
+
+🔍 Insight:
+Graduation rates vary significantly across schools, highlighting inequality in student outcomes.
+
+2️⃣ Class Size vs. College Attendance (Center Panel)
+
+Scatter plot showing:
+
+X-axis: % of students attending college
+
+Y-axis: Average class size
+
+Each dot represents a school
+
+Color intensity reflects economic disadvantage
+
+Includes a trend line
+
+🔍 Insight:
+There is a positive correlation between class size and college attendance, but this does not imply causation.
+Other factors (school resources, funding, student support) may play a larger role.
+
+3️⃣ District Performance Grouping (Top Right)
+
+Districts are grouped into:
+
+Passing Threshold
+
+Need More Work
+
+Interactive filters allow users to focus on specific performance groups
+
+🔍 Insight:
+This view helps decision-makers quickly identify districts requiring intervention.
+
+4️⃣ 4th Grade Math Performance (Right Panel)
+
+Shows MCAS 4th grade math scores by district
+
+Includes a benchmark line for comparison
+
+Highlights districts above and below expected performance
+
+🔍 Insight:
+Early math performance varies widely, which may impact long-term academic success.
+
+🛠 Tools & Technologies
+
+Tableau – Data visualization & dashboard design
+
+Public Education Data – Massachusetts DOE
+
+Analytical Focus – Education outcomes, equity, system health
+
+📌 Key Takeaways
+
+School performance across Massachusetts is uneven
+
+Correlation ≠ causation when analyzing class size and college attendance
+
+Early academic indicators (like 4th grade math) are critical
+
+Dashboards can replace long reports by providing clear, visual insights
+
+📷 Dashboard Preview
+
+(Add a screenshot of your Tableau dashboard here)
+
+🚀 How This Project Can Be Used
+
+Education policy analysis
+
+School district performance reviews
+
+Data storytelling and dashboard design practice
+
+Portfolio project for data analyst roles
+
+👩‍💻 Author
+
+Fahimeh Jafarianlari
+Data Analytics | Tableau | Education Data Visualization
